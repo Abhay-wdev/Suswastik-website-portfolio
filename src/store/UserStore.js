@@ -164,7 +164,7 @@ logout: (router) => {
     try {
       set({ loading: true });
 
-      const res = await api.post(`/auth/send-forgot-password-otp`, { email });
+      const res = await api.post(`/auth/forgot-password`, { email });
 
       if (res.data.success) {
         set({ step: 2, message: res.data.message });
