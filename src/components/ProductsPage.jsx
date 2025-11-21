@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from "react";
 import { ShoppingBag, Filter, ShoppingCart, Plus, Minus } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
