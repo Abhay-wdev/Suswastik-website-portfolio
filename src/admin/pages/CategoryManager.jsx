@@ -6,7 +6,7 @@ import {
 import toast, { Toaster } from 'react-hot-toast';
 
 // ============================
-// CATEGORY FORM MODAL
+// CATEGORY FORM  MODAL
 // ============================
 function CategoryFormModal({ category, onClose, token }) {
   const { createCategory, updateCategory } = useCategoryStore();
