@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-
+import { Link } from "react-router-dom";
 const HandmadeSection = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-white to-orange-50 py-5 px-4">

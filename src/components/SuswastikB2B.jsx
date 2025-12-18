@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Users, TrendingUp, Award } from "lucide-react";
-
+import { Link } from "react-router-dom";
 const SuswastikB2B = () => {
   return (
     <section className="bg-white rounded-2xl shadow-md p-8 max-w-6xl mx-auto my-16 border border-gray-100">

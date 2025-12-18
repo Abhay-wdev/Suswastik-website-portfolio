@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
 const HeroSection = () => {
   const [heroImages, setHeroImages] = useState([]);
   const [loading, setLoading] = useState(true);
