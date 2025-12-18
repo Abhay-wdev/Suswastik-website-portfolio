@@ -1,95 +1,88 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuthStore } from "../store/UserStore";
- 
 import {
   FaUser,
   FaLock,
   FaExclamationTriangle,
   FaArrowRight,
 } from "react-icons/fa";
-import toast from "react-hot-toast";
 
 export default function LoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [attempts, setAttempts] = useState(0);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
   const { login, loading } = useAuthStore();
 
-  // ----------------------------
-  // HANDLE INPUT CHANGE
-  // ----------------------------
+  /* =====================================================
+     HANDLE INPUT CHANGE
+  ===================================================== */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    // Clear error when user starts typing
     if (error) setError("");
+    if (message) setMessage("");
   };
 
-  // ----------------------------
-  // HANDLE FORGOT PASSWORD
-  // ----------------------------
+  /* =====================================================
+     HANDLE FORGOT PASSWORD
+  ===================================================== */
   const handleForgotPassword = () => {
     navigate("/forgot-password");
   };
 
-  // ----------------------------
-  // HANDLE SUBMIT
-  // ----------------------------
+  /* =====================================================
+     HANDLE SUBMIT
+  ===================================================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Basic validation
+    // ---------- Validation ----------
     if (!form.email || !form.password) {
-      toast.error("Please fill in all fields");
+      setError("Please fill in all fields");
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(form.email)) {
-      toast.error("Please enter a valid email address");
+      setError("Please enter a valid email address");
       return;
     }
 
     if (form.password.length < 4) {
-      toast.error("Password must be at least 4 characters long");
+      setError("Password must be at least 4 characters long");
       return;
     }
 
-    // ✅ Attempt login
-    const result = await login(form, navigate);
-    console.log("✅ Login result:", result);
+    setError("");
+    setMessage("");
 
-    // ✅ Handle attempts logic
+    // ---------- Attempt login ----------
+    const result = await login(form, navigate);
+
     if (!result?.success) {
       const newAttempts = attempts + 1;
       setAttempts(newAttempts);
 
-      // Check if the error message is specifically "Invalid username or password"
-      if (result.message === "Invalid username or password") {
-        if (newAttempts === 1) {
-          // First failed attempt
-          setError("Invalid username or password");
-        } else {
-          // Multiple failed attempts
-          setError("Multiple failed attempts. Please try again or reset your password.");
-        }
+      if (result?.message === "Invalid username or password") {
+        setError(
+          newAttempts === 1
+            ? "Invalid username or password"
+            : "Multiple failed attempts. Please try again or reset your password."
+        );
       } else {
-        // For any other error message, show it inline
-        setError(result.message);
+        setError(result?.message || "Invalid username or password");
       }
     } else {
-      // Reset attempts and error on success
       setAttempts(0);
-      setError("");
-      // Show success message if available
-      if (result?.message) {
-        toast.success(result.message);
-      }
+      setMessage(result?.message || "Login successful");
     }
   };
 
+  /* =====================================================
+     UI
+  ===================================================== */
   return (
     <div className="max-w-md mx-auto mt-16 p-1">
       <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl shadow-xl p-8 border border-amber-200">
@@ -101,6 +94,21 @@ export default function LoginForm() {
           <h2 className="text-3xl font-bold text-amber-800">Welcome Back</h2>
           <p className="text-amber-600 mt-2">Sign in to your account</p>
         </div>
+
+        {/* ================= MESSAGE BOX ================= */}
+        {message && (
+          <div className="mb-4 flex items-center bg-green-100 text-green-700 p-3 rounded-lg border border-green-300">
+            <FaArrowRight className="mr-2 flex-shrink-0" />
+            <span className="text-sm">{message}</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-4 flex items-center bg-red-50 text-red-700 p-3 rounded-lg border border-red-200">
+            <FaExclamationTriangle className="mr-2 flex-shrink-0" />
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -117,7 +125,9 @@ export default function LoginForm() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full pl-10 pr-3 py-3 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white text-gray-700 placeholder-amber-400 transition duration-300"
+                className="w-full pl-10 pr-3 py-3 border border-amber-300 rounded-lg
+                  focus:ring-2 focus:ring-amber-500 focus:border-amber-500
+                  bg-white text-gray-700 placeholder-amber-400 transition"
               />
             </div>
 
@@ -134,24 +144,22 @@ export default function LoginForm() {
                 onChange={handleChange}
                 required
                 minLength={4}
-                className="w-full pl-10 pr-3 py-3 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white text-gray-700 placeholder-amber-400 transition duration-300"
+                className="w-full pl-10 pr-3 py-3 border border-amber-300 rounded-lg
+                  focus:ring-2 focus:ring-amber-500 focus:border-amber-500
+                  bg-white text-gray-700 placeholder-amber-400 transition"
               />
             </div>
-
-            {/* Inline Error Message */}
-            {error && (
-              <div className="flex items-center text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
-                <FaExclamationTriangle className="mr-2 flex-shrink-0" />
-                <span className="text-sm">{error}</span>
-              </div>
-            )}
           </div>
 
           {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-3 rounded-lg font-medium hover:from-amber-700 hover:to-amber-800 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg flex items-center justify-center"
+            className="w-full bg-gradient-to-r from-amber-600 to-amber-700
+              text-white py-3 rounded-lg font-medium
+              hover:from-amber-700 hover:to-amber-800
+              transition-all duration-300 transform hover:scale-[1.02]
+              active:scale-[0.98] shadow-md flex items-center justify-center"
           >
             {loading ? (
               <>
@@ -168,7 +176,7 @@ export default function LoginForm() {
                     r="10"
                     stroke="currentColor"
                     strokeWidth="4"
-                  ></circle>
+                  />
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -177,7 +185,7 @@ export default function LoginForm() {
                       5.291A7.962 7.962 0 014 12H0c0 
                       3.042 1.135 5.824 3 
                       7.938l3-2.647z"
-                  ></path>
+                  />
                 </svg>
                 Logging in...
               </>
@@ -203,7 +211,10 @@ export default function LoginForm() {
                 </p>
                 <button
                   onClick={handleForgotPassword}
-                  className="mt-3 w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-2 px-4 rounded-lg font-medium hover:from-amber-600 hover:to-amber-700 transition-all duration-300 flex items-center justify-center"
+                  className="mt-3 w-full bg-gradient-to-r from-amber-500 to-amber-600
+                    text-white py-2 px-4 rounded-lg font-medium
+                    hover:from-amber-600 hover:to-amber-700 transition-all
+                    flex items-center justify-center"
                 >
                   Reset your password
                   <FaArrowRight className="ml-2 text-sm" />
@@ -213,15 +224,15 @@ export default function LoginForm() {
           </div>
         )}
 
-        {/* Sign Up Link */}
+        {/* Sign Up */}
         <div className="mt-8 pt-6 border-t border-amber-200 text-center">
           <span className="text-amber-700">Don&apos;t have an account? </span>
           <Link
             to="/signup"
-            className="inline-flex items-center text-amber-700 hover:text-amber-800 font-semibold transition-colors duration-300"
+            className="inline-flex items-center text-amber-700
+              hover:text-amber-800 font-semibold transition"
           >
-            Sign Up
-            <FaArrowRight className="ml-1 text-xs" />
+            Sign Up <FaArrowRight className="ml-1 text-xs" />
           </Link>
         </div>
       </div>

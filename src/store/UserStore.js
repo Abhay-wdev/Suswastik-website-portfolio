@@ -1,15 +1,16 @@
 import { create } from "zustand";
 import axios from "axios";
 
-// Base URL for backend (Vite environment)
+/* =========================================================
+   AXIOS SETUP
+========================================================= */
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Create axios instance INSIDE the store (no external import)
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
-  }
+  },
 });
 
 // Auto attach token
@@ -22,9 +23,10 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-
+/* =========================================================
+   AUTH STORE
+========================================================= */
 export const useAuthStore = create((set, get) => ({
-
   user: null,
   token: null,
   users: [],
@@ -33,223 +35,232 @@ export const useAuthStore = create((set, get) => ({
   error: "",
   step: 1,
 
-  // =========================================================
-  // LOGIN
-  // =========================================================
-  login: async (form, router) => {
+  /* ================= UTILITIES ================= */
+  setMessage: (msg) => set({ message: msg }),
+  goToStep: (step) => set({ step }),
+
+  /* =========================================================
+     LOGIN
+  ========================================================= */
+  login: async (form, navigate) => {
     try {
-      set({ loading: true, error: "", message: "" });
+      set({ loading: true, message: "", error: "" });
 
-      const res = await api.post(`/user/login`, form);
-
+      const res = await api.post("/user/login", form);
       const { success, user, token, message } = res.data;
 
       if (!success) {
-        set({ loading: false, error: message || "Login failed" });
-        return { success: false, message };
+        set({ error: message || "Login failed" });
+        return;
       }
 
-      // Save
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("userId", user._id);
 
-      // Redirect
-      if (router) {
-        if (user.role === "admin") router("/admin");
-        else router("/");
+      set({
+        user,
+        token,
+        message: message || "Login successful",
+      });
+
+      if (navigate) {
+        user.role === "admin" ? navigate("/admin") : navigate("/");
       }
-
-      set({ loading: false, user, token, message: message || "Login success" });
-      return { success: true, user, token };
-
     } catch (err) {
-      const msg = err.response?.data?.message || "Login failed";
-      set({ loading: false, error: msg });
-      return { success: false, message: msg };
-    }
-  },
-
-  // =========================================================
-  // LOGOUT
-  // =========================================================
-logout: (router) => {
-  // Remove all localStorage keys
-  const removeKeys = ["token", "user", "userId", "shippingAddressId"];
-  removeKeys.forEach((key) => localStorage.removeItem(key));
-
-  // Reset auth store
-  set({
-    user: null,
-    token: null,
-    message: "Logged out successfully",
-  });
-
-  // 🔥 RESET CART STORE DIRECTLY (best & safest)
-  import("./useCartStore").then((module) => {
-    const cartStore = module.default;
-    cartStore.setState({
-      cart: {
-        user: "",
-        items: [],
-        discount: 0,
-        totalPrice: 0,
-        grandTotal: 0,
-        status: "active",
-      },
-    });
-  });
-
-  // Redirect
-  if (router && typeof router.push === "function") {
-    router.push("/login");
-  }
-},
-
-
-  // =========================================================
-  // SEND OTP FOR SIGNUP
-  // =========================================================
-  sendOtp: async (email) => {
-    try {
-      set({ loading: true, message: "" });
-
-      const res = await api.post(`/auth/send-otp`, { email });
-
-      if (res.data.success) {
-        set({ step: 2, message: res.data.message });
-      } else {
-        set({ message: res.data.message });
-      }
-
-    } catch (err) {
-      set({ message: err.response?.data?.message || "Error sending OTP" });
+      set({
+        error: err.response?.data?.message || "Login failed",
+      });
     } finally {
       set({ loading: false });
     }
   },
 
-  // =========================================================
-  // VERIFY OTP
-  // =========================================================
-  verifyOtp: async (data, router) => {
-    try {
-      set({ loading: true });
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
+  logout: (navigate) => {
+    ["token", "user", "userId", "shippingAddressId"].forEach((k) =>
+      localStorage.removeItem(k)
+    );
 
-      const res = await api.post(`/auth/verify-otp`, data);
+    set({
+      user: null,
+      token: null,
+      message: "Logged out successfully",
+    });
+
+    // Reset cart store safely
+    import("./useCartStore").then((module) => {
+      module.default.setState({
+        cart: {
+          user: "",
+          items: [],
+          discount: 0,
+          totalPrice: 0,
+          grandTotal: 0,
+          status: "active",
+        },
+      });
+    });
+
+    if (navigate) navigate("/login");
+  },
+
+  /* =========================================================
+     SEND OTP (SIGNUP)
+  ========================================================= */
+  sendOtp: async (email) => {
+    try {
+      set({ loading: true, message: "" });
+
+      const res = await api.post("/auth/send-otp", { email });
+
+      if (res.data.success) {
+        set({
+          step: 2,
+          message: res.data.message || "OTP sent successfully",
+        });
+      } else {
+        set({ message: res.data.message || "Failed to send OTP" });
+      }
+    } catch (err) {
+      set({
+        message: err.response?.data?.message || "Error sending OTP",
+      });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  /* =========================================================
+     VERIFY OTP & REGISTER
+  ========================================================= */
+  verifyOtp: async (data, navigate) => {
+    try {
+      set({ loading: true, message: "" });
+
+      const res = await api.post("/auth/verify-otp", data);
 
       if (res.data.success) {
         const { user, message } = res.data;
 
         localStorage.setItem("user", JSON.stringify(user));
 
-        set({ user, step: 1, message });
+        set({
+          user,
+          step: 1,
+          message: message || "Registration successful",
+        });
 
-        setTimeout(() => router("/login"), 1500);
+        setTimeout(() => navigate("/login"), 1500);
       } else {
-        set({ message: res.data.message });
+        set({ message: res.data.message || "Verification failed" });
       }
-
     } catch (err) {
-      set({ message: err.response?.data?.message || "OTP verification failed" });
+      set({
+        message: err.response?.data?.message || "OTP verification failed",
+      });
     } finally {
       set({ loading: false });
     }
   },
 
-  // =========================================================
-  // FORGOT PASSWORD OTP
-  // =========================================================
+  /* =========================================================
+     FORGOT PASSWORD OTP
+  ========================================================= */
   sendForgotPasswordOtp: async (email) => {
     try {
-      set({ loading: true });
+      set({ loading: true, message: "" });
 
-      const res = await api.post(`/auth/forgot-password`, { email });
+      const res = await api.post("/auth/forgot-password", { email });
 
       if (res.data.success) {
-        set({ step: 2, message: res.data.message });
+        set({
+          step: 2,
+          message: res.data.message || "OTP sent",
+        });
       } else {
         set({ message: res.data.message });
       }
-
     } catch (err) {
-      set({ message: err.response?.data?.message || "Error sending OTP" });
+      set({
+        message: err.response?.data?.message || "Error sending OTP",
+      });
     } finally {
       set({ loading: false });
     }
   },
 
-  // =========================================================
-  // RESET PASSWORD
-  // =========================================================
-  resetPassword: async (data, router) => {
+  /* =========================================================
+     RESET PASSWORD
+  ========================================================= */
+  resetPassword: async (data, navigate) => {
     try {
-      set({ loading: true });
+      set({ loading: true, message: "" });
 
-      const res = await api.post(`/auth/reset-password`, data);
+      const res = await api.post("/auth/reset-password", data);
 
       if (res.data.success) {
-        set({ step: 1, message: res.data.message });
-        setTimeout(() => router("/login"), 1500);
+        set({
+          step: 1,
+          message: res.data.message || "Password reset successful",
+        });
+
+        setTimeout(() => navigate("/login"), 1500);
       } else {
         set({ message: res.data.message });
       }
-
     } catch (err) {
-      set({ message: err.response?.data?.message || "Reset failed" });
+      set({
+        message: err.response?.data?.message || "Reset failed",
+      });
     } finally {
       set({ loading: false });
     }
   },
 
-  // =========================================================
-  // USER MANAGEMENT
-  // =========================================================
+  /* =========================================================
+     GET USER BY ID
+  ========================================================= */
   getUserById: async (userId) => {
     try {
       set({ loading: true });
 
       const res = await api.get(`/user/${userId}`);
-
       set({ user: res.data.user });
-
     } catch (err) {
-      set({ message: err.response?.data?.message || "User not found" });
+      set({
+        message: err.response?.data?.message || "User not found",
+      });
     } finally {
       set({ loading: false });
     }
   },
- updateUser: async (userId, updatedData, file = null) => {
+
+  /* =========================================================
+     UPDATE USER PROFILE
+  ========================================================= */
+  updateUser: async (userId, updatedData, file = null) => {
     try {
       set({ loading: true, message: "", error: "" });
 
-      const token = get().token || localStorage.getItem("token");
-
       const formData = new FormData();
-      Object.entries(updatedData).forEach(([k, v]) =>
-        formData.append(k, v)
+      Object.entries(updatedData).forEach(([key, value]) =>
+        formData.append(key, value)
       );
       if (file) formData.append("image", file);
 
-      const res = await api.put(
-        `${BASE_URL}/user/update/${userId}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await api.put(`/user/update/${userId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       if (res.data.success) {
-        const updatedUser = res.data.user;
-        localStorage.setItem("user", JSON.stringify(updatedUser));
+        localStorage.setItem("user", JSON.stringify(res.data.user));
 
         set({
-          user: updatedUser,
-          message: "Profile updated successfully!",
-          error: "",
+          user: res.data.user,
+          message: "Profile updated successfully",
         });
       } else {
         set({ error: res.data.message || "Update failed" });
