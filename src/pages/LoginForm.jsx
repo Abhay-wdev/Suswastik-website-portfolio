@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/UserStore";
 import {
   FaUser,
@@ -214,13 +215,13 @@ export default function LoginForm() {
         {/* Sign Up Link */}
         <div className="mt-8 pt-6 border-t border-amber-200 text-center">
           <span className="text-amber-700">Don&apos;t have an account? </span>
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             className="inline-flex items-center text-amber-700 hover:text-amber-800 font-semibold transition-colors duration-300"
           >
             Sign Up
             <FaArrowRight className="ml-1 text-xs" />
-          </a>
+          </Link>
         </div>
       </div>
     </div>
