@@ -172,7 +172,7 @@ const CategoryCardsManager = () => {
 
           <div className="md:col-span-2">
             <label className="block font-medium text-gray-700 mb-1">
-              Upload Image
+              Upload Image (1024x1024 px recommended)
             </label>
             <div className="flex items-center gap-4 bg-orange-50 border border-orange-200 p-4 rounded-xl">
               <input

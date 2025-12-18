@@ -112,7 +112,7 @@ const HeroImageForm = ({
           {/* Desktop Image */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Desktop Image <span className="text-red-500">*</span>
+              Desktop Image (1760 x 590)px <span className="text-red-500">*</span>
             </label>
             <input
               type="file"
@@ -147,7 +147,7 @@ const HeroImageForm = ({
           {/* Mobile Image */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Mobile Image <span className="text-red-500">*</span>
+              Mobile Image (600 x 600)px <span className="text-red-500">*</span>
             </label>
             <input
               type="file"

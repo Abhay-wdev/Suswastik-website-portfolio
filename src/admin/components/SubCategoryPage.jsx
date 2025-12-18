@@ -177,7 +177,7 @@ console.log("Filtered Subcategories:", filteredSubCategories);
                   <label className="flex-1 cursor-pointer">
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-500 transition text-center">
                       <Upload className="mx-auto mb-2 text-gray-400" size={24} />
-                      <p className="text-sm text-gray-600">Click to upload image</p>
+                      <p className="text-sm text-gray-600">Click to upload image (500 X 500)px</p>
                     </div>
                     <input
                       type="file"

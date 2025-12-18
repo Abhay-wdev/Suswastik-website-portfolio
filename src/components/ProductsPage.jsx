@@ -369,9 +369,9 @@ const ProductsPage = () => {
             <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: 'rgba(192, 83, 0, 0.1)' }}>
               <ShoppingBag className="w-12 h-12" style={{ color: '#c05300' }} />
             </div>
-            <h3 className="text-2xl font-bold mb-2" style={{ color: '#c05300' }}>No Laddus Found</h3>
+            <h3 className="text-2xl font-bold mb-2" style={{ color: '#c05300' }}>No Spices Found</h3>
             <p className="max-w-md mx-auto" style={{ color: 'rgba(192, 83, 0, 0.7)' }}>
-              We couldn&apos;t find any Laddus in this category. Try selecting a different category.
+              We couldn&apos;t find any Spices in this category. Try selecting a different category.
             </p>
           </div>
         ) : (
