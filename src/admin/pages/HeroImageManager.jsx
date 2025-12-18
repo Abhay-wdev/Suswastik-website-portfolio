@@ -275,14 +275,14 @@ const HeroImageCard = ({
       <div className="p-4">
         <div className="mb-3">
           <p className="text-sm text-gray-500">Link:</p>
-          <a 
-            href={image.link} 
+          <Link
+            to={image.link} 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 text-sm break-all"
           >
             {image.link}
-          </a>
+          </Link>
         </div>
         
         <div className="flex justify-between items-center">

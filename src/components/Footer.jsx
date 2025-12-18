@@ -1,50 +1,36 @@
 import React, { useEffect, useState } from "react";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Instagram,
-  ExternalLink,
-} from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { Phone, Mail, MapPin, Instagram, ExternalLink } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const location = useLocation();
-  const pathname = location.pathname;
+  const { pathname } = useLocation();
   const [subCategories, setSubCategories] = useState([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  // Fetch subcategories grouped by subCategory name
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/products/all/?limit=100`
+          `${import.meta.env.VITE_API_BASE_URL}/products/?limit=100`
         );
         const data = await res.json();
 
-        // Group products by subCategory name
         const grouped = {};
         data.products.forEach((product) => {
           const subCatName = product.subCategory?.name || "Others";
           if (!grouped[subCatName]) grouped[subCatName] = [];
-          grouped[subCatName].push({
-            title: product.name,
-            href: `/products/${product.slug}`,
-          });
         });
 
-        // Convert grouped into an array of subCategory items
-        const subCategoryMenu = Object.keys(grouped).map((subCatName) => ({
-          name: subCatName,
-          href: `/products/?subCategory=${encodeURIComponent(subCatName.toLowerCase())}`,
+        const menu = Object.keys(grouped).map((name) => ({
+          name,
+          to: `/products?subCategory=${encodeURIComponent(name.toLowerCase())}`,
         }));
 
-        setSubCategories(subCategoryMenu);
+        setSubCategories(menu);
       } catch (err) {
         console.error("Footer fetch error:", err);
       }
@@ -54,59 +40,55 @@ const Footer = () => {
   }, []);
 
   const quickLinks = [
-    { name: "Home", href: "/" },
-    { name: "Products", href: "/products" },
-    { name: "Contact Us", href: "/contact-us" },
-    { name: "About Us", href: "/about-us" },
-    { name: "Blog", href: "/blogs" },
-    { name: "Privacy & policy", href: "/privacy-policy" },
-    { name: "Cancellations policy", href: "/cancellations-policy" },
-    { name: "Refund Policy", href: "/refund-policy" },
-  ];
-
-  const socialLinks = [
-    {
-      name: "Instagram",
-      icon: Instagram,
-      href: "https://www.instagram.com/_suswastik/?igsh=Mmh3czBpbWE5dDU1&utm_source=qr#",
-    },
+    { name: "Home", to: "/" },
+    { name: "Products", to: "/products" },
+    { name: "Contact Us", to: "/contact-us" },
+    { name: "About Us", to: "/about-us" },
+    { name: "Blog", to: "/blogs" },
+    { name: "Privacy Policy", to: "/privacy-policy" },
+    { name: "Cancellations Policy", to: "/cancellations-policy" },
+    { name: "Refund Policy", to: "/refund-policy" },
   ];
 
   return (
     <footer className="bg-[#c05300] text-gray-200">
-      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+
           {/* Company Info */}
           <div className="space-y-6">
             <img
               src="/images/logo.webp"
-              alt="Company Logo"
-              className="h-23 w-auto bg-amber-50 rounded-2xl"
+              alt="Suswastik Logo"
+              className="h-20 bg-amber-50 rounded-2xl"
             />
-            <p className="text-sm leading-relaxed">
-              स्वाद से बढ़कर कुछ नहीं - Bringing authentic Indian flavors to your kitchen. Our spices and food products are carefully selected and processed to ensure the highest quality and authentic taste. 
+
+            <p className="text-sm">
+              स्वाद से बढ़कर कुछ नहीं — Bringing authentic Indian flavors to your kitchen.
             </p>
-            <div className="flex space-x-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-gray-200 hover:text-white transition-colors duration-300"
-                  aria-label={social.name}
-                >
-                  <social.icon className="w-5 h-5" />
-                </a>
-              ))} <div className="flex items-center space-x-3">
-                <a href='https://www.amazon.in/l/27943762031?me=A2W6NPLCNAU8Z3&tag=ShopReferral_266c306b-a19c-4a41-b695-d6068f0550e2&ref=sf_seller_app_share_new_ls_srb' target="_blank">
-                 <img
-                src="/images/amazon.webp"
-                alt="Amazon Logo"
-                className="ml-4 hover:cursor-pointer w-20 h-10"
-              />
+
+            <div className="flex items-center space-x-4">
+              {/* Instagram */}
+              <a
+                href="https://www.instagram.com/_suswastik/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Instagram className="w-5 h-5 hover:text-white" />
               </a>
-          </div>
+
+              {/* Amazon */}
+              <a
+                href="https://www.amazon.in/l/27943762031?me=A2W6NPLCNAU8Z3"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src="/images/amazon.webp"
+                  alt="Amazon"
+                  className="w-20 h-10"
+                />
+              </a>
             </div>
           </div>
 
@@ -118,89 +100,81 @@ const Footer = () => {
             <ul className="space-y-4">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-sm hover:text-white hover:underline transition-colors duration-300 flex items-center"
+                  <Link
+                    to={link.to}
+                    className="text-sm hover:text-white flex items-center"
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
-              
             </ul>
           </div>
 
-          {/* Product Categories (Dynamic from API) */}
+          {/* Product Categories */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-6">
               Product Categories
             </h3>
             <ul className="space-y-4">
-              {subCategories.length > 0 ? (
+              {subCategories.length ? (
                 subCategories.map((cat) => (
                   <li key={cat.name}>
-                    <a
-                      href={cat.href}
-                      className="text-sm hover:text-white hover:underline transition-colors duration-300 flex items-center"
+                    <Link
+                      to={cat.to}
+                      className="text-sm hover:text-white flex items-center"
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       {cat.name}
-                    </a>
+                    </Link>
                   </li>
                 ))
               ) : (
-                <li className="text-sm text-gray-400">Loading categories...</li>
+                <li className="text-sm text-gray-300">Loading...</li>
               )}
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-6">
               Contact Us
             </h3>
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <MapPin className="w-5 h-5 mr-3 mt-1 flex-shrink-0" />
-                <p className="text-sm">
-                 P.No.8, S.No.5, Ground Floor, Naina Vihar, Rampura Road, Sanganer, Jaipur-302029
-                </p>
-              </div>
-              <div className="flex items-center">
-                <Phone className="w-5 h-5 mr-3 flex-shrink-0" />
-                <a
-                  href="tel:+919414446467"
-                  className="text-sm hover:text-white transition-colors duration-300"
-                >
-                  +91 9414446467
-                </a>
-                ,&nbsp;
-                <a
-                  href="tel:+919414545230"
-                  className="text-sm hover:text-white transition-colors duration-300"
-                >
-                  +91 9414545230
-                </a>
-              </div>
-              <div className="flex items-center">
-                <Mail className="w-5 h-5 mr-3 flex-shrink-0" />
-                <a
-                  href="mailto:Suswastikspices@gmail.com"
-                  className="text-sm hover:text-white transition-colors duration-300"
-                >
+
+            <div className="space-y-4 text-sm">
+              <p className="flex">
+                <MapPin className="w-5 h-5 mr-2" />
+                Jaipur, Rajasthan – 302029
+              </p>
+
+              <p className="flex">
+                <Phone className="w-5 h-5 mr-2" />
+                <a href="tel:+919414446467">+91 9414446467</a>
+              </p>
+
+              <p className="flex">
+                <Mail className="w-5 h-5 mr-2" />
+                <a href="mailto:Suswastikspices@gmail.com">
                   Suswastikspices@gmail.com
                 </a>
-              </div>
+              </p>
             </div>
           </div>
         </div>
 
-     {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-          <p className="text-sm text-gray-200">© {currentYear} Developed<a className="cursor-pointer text-green-50  hover:font-bold" href="https://viralnexus.in/"> VIRAL nexus.</a> All rights reserved.</p>
+        {/* Copyright */}
+        <div className="mt-12 pt-6 border-t text-center text-sm">
+          © {currentYear} Developed by{" "}
+          <a
+            href="https://viralnexus.in/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-green-100 hover:font-bold"
+          >
+            VIRAL Nexus
+          </a>
         </div>
-    
       </div>
     </footer>
   );

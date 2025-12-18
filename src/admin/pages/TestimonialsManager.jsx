@@ -11,6 +11,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { useTestimonialStore } from "../../store/testimonialStore";
+import { Link } from "react-router-dom";
 
 const TestimonialsManager = () => {
   const {
@@ -224,14 +225,14 @@ const TestimonialsManager = () => {
                 </p>
 
                 {t.link && (
-                  <a
-                    href={t.link}
+                  <Link
+                    to={t.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 text-sm hover:underline font-medium"
                   >
                     View More →
-                  </a>
+                  </Link>
                 )}
 
                 <div className="flex gap-3 mt-4">

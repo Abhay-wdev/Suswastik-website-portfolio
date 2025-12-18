@@ -146,14 +146,14 @@ export default function Contact() {
   </h3>
 
   <div className="flex items-center space-x-4">
-    <a
-      href="https://www.instagram.com/_suswastik/?igsh=Mmh3czBpbWE5dDU1&utm_source=qr#"
+    <Link
+      to="https://www.instagram.com/_suswastik/?igsh=Mmh3czBpbWE5dDU1&utm_source=qr#"
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex"
     >
       <SocialIcon Icon={FaInstagram} link="https://www.instagram.com/_suswastik/" />
-    </a>
+    </Link>
   </div>
 </div>
 
@@ -238,13 +238,13 @@ function ContactItem({ icon, label, text }) {
 /* --- Social Icons --- */
 function SocialIcon({ Icon, link }) {
   return (
-    <a
-      href={link}
+    <Link
+      to={link}
       target="_blank"
       rel="noopener noreferrer"
       className="bg-[#BB4D00] text-white p-3 rounded-full hover:bg-[#a03f00] transition"
     >
       <Icon size={20} />
-    </a>
+    </Link>
   );
 }

@@ -129,9 +129,9 @@ const HeroSection = () => {
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {heroImages.map((image) => (
-          <a
+          <Link
             key={image._id}
-            href={image.link || "#"}
+            to={image.link || "#"}
             target="_blank"
             rel="noopener noreferrer"
             className="block w-full h-full flex-shrink-0"
@@ -148,7 +148,7 @@ const HeroSection = () => {
                 draggable="false"
               />
             </picture>
-          </a>
+          </Link>
         ))}
       </div>
 

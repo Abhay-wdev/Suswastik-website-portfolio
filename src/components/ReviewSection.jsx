@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { useTestimonialStore } from "../store/testimonialStore";
+import { Link } from "react-router-dom";
 
 const ReviewSection = () => {
   const { testimonials, fetchTestimonials, loading, error } = useTestimonialStore();
@@ -34,9 +35,9 @@ const ReviewSection = () => {
   return (
     <section className="relative flex flex-col items-center justify-center px-5 py-14 sm:px-8 md:px-16 md:py-20 w-full text-gray-800 overflow-hidden">
       {/* Brand Logo */}
-      <a
+      <Link
         className="sm:mb-10 md:mb-12 hover:opacity-80 transition z-20"
-        href="#"
+        to="#"
         rel="noopener noreferrer"
       >
         <img
@@ -44,7 +45,7 @@ const ReviewSection = () => {
           src="/images/logo.webp"
           alt="Spice Brand Logo"
         />
-      </a>
+      </Link>
 
       {/* Heading */}
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-700 mb-6 sm:mb-10 text-center">
@@ -118,15 +119,15 @@ const ReviewSection = () => {
               />
             )}
             <div className="text-sm sm:text-base text-gray-700 mt-2 sm:mt-0">
-              <a
-                href={active.link || "#"}
+              <Link
+                to={active.link || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center sm:justify-start gap-1 font-semibold text-lg text-orange-700 hover:text-orange-600 transition-colors"
               >
                 {active.name}
                 {active.link && <ExternalLink size={16} className="opacity-80" />}
-              </a>
+              </Link>
               <p className="opacity-80">{active.title}</p>
             </div>
           </div>

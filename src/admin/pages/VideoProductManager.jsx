@@ -10,6 +10,7 @@ import {
   FaSpinner,
   FaPlusCircle,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const VideoProductManager = () => {
   const {
@@ -210,22 +211,22 @@ const VideoProductManager = () => {
                   {product.title}
                 </h3>
                 <div className="flex flex-col gap-1 mb-4">
-                  <a
-                    href={product.youtubeUrl}
+                  <Link
+                    to={product.youtubeUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue-600 hover:underline text-sm flex items-center gap-1"
                   >
                     <FaYoutube /> Watch Video
-                  </a>
-                  <a
-                    href={product.productUrl}
+                  </Link>
+                  <Link
+                    to={product.productUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="text-green-600 hover:underline text-sm flex items-center gap-1"
                   >
                     <FaShoppingBag /> View Product
-                  </a>
+                  </Link>
                 </div>
                 <div className="flex justify-between mt-2">
                   <button

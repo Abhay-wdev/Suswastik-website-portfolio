@@ -500,9 +500,9 @@ export default function CategoryManager() {
                         >
                           <Eye size={18} />
                         </button>
-                        <a href={`/admin/category/${cat._id}`} className="text-purple-600 hover:text-purple-800 transition" title="View Products">
+                        <Link to={`/admin/category/${cat._id}`} className="text-purple-600 hover:text-purple-800 transition" title="View Products">
                           <Package size={18} />
-                        </a>
+                        </Link>
                         <button
                           onClick={() => {
                             setEditingCategory(cat);

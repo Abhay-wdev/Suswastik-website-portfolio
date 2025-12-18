@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-
+import { Link } from "react-router-dom";
 const API_BASE = `${import.meta.env.VITE_API_BASE_URL}/company`;
 
 export default function CompanyManagement() {
@@ -468,14 +468,14 @@ export default function CompanyManagement() {
                         {company.website && (
                           <p className="text-sm text-gray-600">
                             <span className="font-medium">Website:</span>{" "}
-                            <a
-                              href={company.website}
+                            <Link
+                              to={company.website}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:underline"
                             >
                               {company.website}
-                            </a>
+                            </Link>
                           </p>
                         )}
                       </div>
@@ -504,9 +504,9 @@ export default function CompanyManagement() {
                           <div className="flex flex-wrap gap-2 mt-1">
                             {company.socialLinks.map((social, idx) => (
                               social.link && (
-                                <a
+                                <Link
                                   key={idx}
-                                  href={social.link}
+                                  to={social.link}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center space-x-1 text-sm text-gray-600 hover:text-blue-600"
@@ -519,7 +519,7 @@ export default function CompanyManagement() {
                                     />
                                   )}
                                   <span>{social.social}</span>
-                                </a>
+                                </Link>
                               )
                             ))}
                           </div>

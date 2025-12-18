@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { Link } from "react-router-dom";
 export default function BlogDashboard() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -76,12 +76,12 @@ export default function BlogDashboard() {
     <div className="max-w-6xl mx-auto py-10 px-4">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold">Blog Management</h1>
-        <a
-          href="/admin/blogs/new"
+        <Link
+          to="/admin/blogs/new"
           className="bg-blue-600 text-white px-4 py-2 rounded-lg"
         >
           + New Blog
-        </a>
+        </Link>
       </div>
 
       {blogs.length === 0 ? (
@@ -114,12 +114,12 @@ export default function BlogDashboard() {
                 }}
               />
               <div className="flex justify-between mt-4">
-                <a
-                  href={`/admin/blogs/${blog._id}`}
+                <Link
+                  to={`/admin/blogs/${blog._id}`}
                   className="text-blue-600 text-sm"
                 >
                   ✏️ Edit
-                </a>
+                </Link>
                 <button
                   onClick={() => deleteBlog(blog._id)}
                   className="text-red-500 text-sm"

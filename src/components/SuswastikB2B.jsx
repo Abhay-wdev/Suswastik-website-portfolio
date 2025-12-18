@@ -69,7 +69,7 @@ const SuswastikB2B = () => {
 
       {/* CTA Button */}
       <div className="text-center">
-        <a href="/distributorForm" aria-label="Get Wholesale Prices">
+        <Link to="/distributorForm" aria-label="Get Wholesale Prices">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
@@ -77,7 +77,7 @@ const SuswastikB2B = () => {
           >
             Get Wholesale Prices
           </motion.button>
-        </a>
+        </Link>
       </div>
     </section>
   );

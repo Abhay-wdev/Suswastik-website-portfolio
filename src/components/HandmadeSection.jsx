@@ -106,11 +106,11 @@ const HandmadeSection = () => {
             transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
             viewport={{ once: true }}
           >
-            <a href="/products">
+            <Link to="/products">
               <button className="bg-amber-600 text-white font-bold py-3 px-10 rounded-full text-lg transition duration-300 transform hover:scale-105 hover:bg-amber-700 shadow-lg">
                 Explore Products
               </button>
-            </a>
+            </Link>
           </motion.div>
         </motion.div>
       </div>
